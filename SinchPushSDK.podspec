@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'SinchPushSDK'
-  s.version          = '1.1.0'
+  s.version          = '1.1.1'
   s.summary          = 'Sinch push SDK for iOS: APNs, the push relay, delivery reports and in-app message alerts'
   s.description      = <<-DESC
     A standalone push SDK: identity and access token, APNs subscriptions, the
@@ -28,7 +28,9 @@ Pod::Spec.new do |s|
   # for the `@_spi(SinchChat)` API the prebuilt SinchChatSDK binary calls. The exact
   # version, because the two pods are released together and share those symbols.
   s.dependency 'SinchPushSDKNotificationExtension', s.version.to_s
-  s.dependency 'SwiftProtobuf', '~> 1.28'
+  # apple/swift-protobuf 1.39.0, repackaged for iOS 16 with library evolution (module
+  # name SwiftProtobuf). Trunk's SwiftProtobuf pod declares iOS 11, which Xcode 27 refuses.
+  s.dependency 'SinchSwiftProtobuf', '1.39.0'
   # The prebuilt SinchChatSDK binary is compiled against a resilient push module, so
   # the app has to build one too. See SinchChatSDK 2.0.0 and the README.
   s.pod_target_xcconfig = {

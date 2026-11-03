@@ -3,6 +3,21 @@
 Changes that affect host developers. Pushed to the public repository
 ([sinch-push-ios-sdk](https://github.com/sinchlabs/sinch-push-ios-sdk)) at release time.
 
+## 1.1.1
+
+Packaging only: the code is identical to 1.1.0. For Swift Package Manager this release
+is the same as 1.1.0, so no update is needed.
+
+### Changed
+
+- **CocoaPods: protobuf comes from `SinchSwiftProtobuf`.** Trunk's `SwiftProtobuf` pod
+  declares iOS 11.0, which Xcode 27 refuses to build. `SinchSwiftProtobuf` 1.39.0 is
+  Apple's swift-protobuf 1.39.0 sources, built for iOS 16 with library evolution and
+  still named `SwiftProtobuf`. The `post_install` hook from the README is no longer
+  needed. Do not add trunk's `SwiftProtobuf` pod to the same app.
+- `SinchPushSDKNotificationExtension` is 1.1.1 as well, because `SinchPushSDK` depends
+  on the extension pod at its own version.
+
 ## 1.1.0
 
 A Swift concurrency API next to the completion-handler and Combine APIs. Everything

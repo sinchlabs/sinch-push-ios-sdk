@@ -51,7 +51,7 @@ The pods live in our own spec repo, not on trunk. Add both sources:
 
 ```ruby
 source 'https://github.com/sinchlabs/sinch-ios-specs.git'
-source 'https://cdn.cocoapods.org/'   # SwiftProtobuf
+source 'https://cdn.cocoapods.org/'   # trunk, for the app's other pods
 
 platform :ios, '16.0'
 use_frameworks!
@@ -65,33 +65,17 @@ target 'NotificationService' do
   pod 'SinchPushSDKNotificationExtension'
 end
 
-# Trunk's SwiftProtobuf declares iOS 11.0 and Xcode refuses deployment targets below
-# 15.0, so the pods need their deployment target raised. SinchPushSDK is built with
-# library evolution because SinchChatSDK (when used) is a prebuilt binary compiled
-# against a resilient push module.
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    target.build_configurations.each do |config|
-      deployment_target = (config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] || '0').to_f
-      if deployment_target > 0 && deployment_target < 15.0
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
-      end
-      if %w[SwiftProtobuf SinchPushSDK SinchPushSDKNotificationExtension].include?(target.name)
-        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
-      end
-    end
-  end
-end
 ```
 
 `SinchPushSDK` brings `SinchPushSDKNotificationExtension` as a dependency at the same
 version, and the in-app assets and strings in a `SinchPushSDK.bundle` resource bundle
 that the SDK looks up at runtime.
 
-If you also use `SinchChatSDK` (2.0.0 or later), do not add `SwiftProtobuf` to the
-Podfile yourself: the chat pod depends on it, and the prebuilt chat binary links the
-same dynamic `SwiftProtobuf.framework` that the app ships. The hook above is required
-for both SDKs.
+Protobuf comes from `SinchSwiftProtobuf`, Apple's swift-protobuf 1.39.0 sources
+repackaged for iOS 16 with library evolution. The module is still `SwiftProtobuf`, so
+`import SwiftProtobuf` works as usual, and no `post_install` hook is needed (you can
+delete the one from 1.1.0 and earlier). Do not add trunk's `SwiftProtobuf` pod to the
+same app: both pods provide the `SwiftProtobuf` module, and `pod install` fails.
 
 ## Quick start
 
